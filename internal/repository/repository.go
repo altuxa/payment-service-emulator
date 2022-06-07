@@ -17,7 +17,8 @@ type Payment interface {
 	PaymentStatus(paymentId int) (string, error)
 	GetAllPaymentsByUserID(userId int) ([]models.Transaction, error)
 	GetAllPaymentsByEmail(email string) ([]models.Transaction, error)
-	CancelPayment(paymentId int)
+	// CancelPayment(paymentId int)
+	DeletePayment(paymentId int) error
 }
 
 type Repositories struct {

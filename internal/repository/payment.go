@@ -53,10 +53,6 @@ func (p *PaymentRepo) PaymentStatus(paymentId int) (string, error) {
 
 func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, error) {
 	payments := []models.Transaction{}
-	// stmt, err := p.db.Prepare("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserID = ?")
-	// if err != nil {
-	// 	return nil, err
-	// }
 	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserID = ?", userId)
 	if err != nil {
 		return nil, err
@@ -69,15 +65,12 @@ func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, 
 		}
 		payments = append(payments, payment)
 	}
+	defer row.Close()
 	return payments, nil
 }
 
 func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction, error) {
 	payments := []models.Transaction{}
-	// stmt, err := p.db.Prepare("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserID = ?")
-	// if err != nil {
-	// 	return nil, err
-	// }
 	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserEmail = ?", email)
 	if err != nil {
 		return nil, err
@@ -90,8 +83,14 @@ func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction,
 		}
 		payments = append(payments, payment)
 	}
+	defer row.Close()
 	return payments, nil
 }
 
-func (p *PaymentRepo) CancelPayment(paymentId int) {
+func (p *PaymentRepo) DeletePayment(paymentId int) error {
+	_, err := p.db.Exec("DELETE FROM Transactions WHERE ID = ?", paymentId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

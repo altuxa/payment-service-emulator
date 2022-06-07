@@ -4,7 +4,9 @@ import "github.com/altuxa/payment-service-emulator/internal/repository"
 
 type User interface{}
 
-type Payment interface{}
+type Payment interface {
+	CancelPayment(paymentId int) error
+}
 
 type Services struct {
 	User
