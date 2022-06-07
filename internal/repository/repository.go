@@ -10,15 +10,15 @@ type User interface {
 	NewUser()
 }
 
-// type Transaction interface{}
-
 type Payment interface {
 	NewPayment(id int, email string, sum int, val string) error
 	PaymentStatus(paymentId int) (string, error)
 	GetAllPaymentsByUserID(userId int) ([]models.Transaction, error)
 	GetAllPaymentsByEmail(email string) ([]models.Transaction, error)
-	// CancelPayment(paymentId int)
 	DeletePayment(paymentId int) error
+	SetStatusSuccess(paymentId int) error
+	SetStatusFail(paymentId int) error
+	SetStatusError(paymentId int) error
 }
 
 type Repositories struct {

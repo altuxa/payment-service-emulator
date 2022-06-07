@@ -24,7 +24,7 @@ func (p *PaymentRepo) NewPayment(id int, email string, sum int, val string) erro
 		return err
 	}
 	date := time.Now()
-	res, err := stmt.Exec(id, email, sum, val, date, date, "NEW")
+	res, err := stmt.Exec(id, email, sum, val, date, date, models.StatusNew)
 	if err != nil {
 		return err
 	}
@@ -89,6 +89,30 @@ func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction,
 
 func (p *PaymentRepo) DeletePayment(paymentId int) error {
 	_, err := p.db.Exec("DELETE FROM Transactions WHERE ID = ?", paymentId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PaymentRepo) SetStatusSuccess(paymentId int) error {
+	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusSuccess)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PaymentRepo) SetStatusFail(paymentId int) error {
+	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusFail)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PaymentRepo) SetStatusError(paymentId int) error {
+	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusError)
 	if err != nil {
 		return err
 	}
