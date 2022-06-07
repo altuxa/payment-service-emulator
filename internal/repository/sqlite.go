@@ -16,3 +16,25 @@ func NewSqliteDB() (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+func CreateTable(db *sql.DB) error {
+	_, err := db.Exec(`CREATE TABLE "Transactions" (
+		"ID"	INTEGER NOT NULL UNIQUE,
+		"UserID"	INTEGER,
+		"UserEmail"	TEXT UNIQUE,
+		"Sum"	INTEGER,
+		"CreationDate"	DATETIME NOT NULL,
+		"ChangeDate"	DATETIME NOT NULL,
+		"Status"	TEXT,
+		PRIMARY KEY("ID" AUTOINCREMENT)
+	)`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`CREATE TABLE "Users" (
+		"ID"	INTEGER NOT NULL UNIQUE,
+		"Email"	TEXT,
+		PRIMARY KEY("ID" AUTOINCREMENT)
+	)`)
+	return err
+}

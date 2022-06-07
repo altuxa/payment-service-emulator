@@ -17,6 +17,7 @@ type ServiceDeps struct {
 
 func NewService(repo *repository.Repositories) *Services {
 	return &Services{
+		User:    NewUserService(repo.User),
 		Payment: NewPaymentService(repo.Payment),
 	}
 }
