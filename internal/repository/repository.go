@@ -2,7 +2,9 @@ package repository
 
 import "database/sql"
 
-type User interface{}
+type User interface {
+	NewUser()
+}
 
 // type Transaction interface{}
 
@@ -14,13 +16,13 @@ type Payment interface {
 	CancelPayment(paymentId int)
 }
 
-type Repository struct {
+type Repositories struct {
 	User
 	Payment
 }
 
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{
+func NewRepository(db *sql.DB) *Repositories {
+	return &Repositories{
 		User:    NewUserRepo(db),
 		Payment: NewPaymentRepo(db),
 	}

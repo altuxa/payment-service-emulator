@@ -11,3 +11,6 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 		db: db,
 	}
 }
+
+func (u *UserRepo) NewUser() {
+}
