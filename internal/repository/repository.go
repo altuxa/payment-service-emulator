@@ -7,7 +7,11 @@ type User interface{}
 // type Transaction interface{}
 
 type Payment interface {
-	NewPayment()
+	NewPayment(id int, email string, sum int, val string)
+	PaymentStatus(paymentId int)
+	GetAllPaymentsByID(userId int)
+	GetAllPaymentsByEmail(email string)
+	CancelPayment(paymentId int)
 }
 
 type Repository struct {
