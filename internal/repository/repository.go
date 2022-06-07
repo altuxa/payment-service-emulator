@@ -1,6 +1,10 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/altuxa/payment-service-emulator/internal/models"
+)
 
 type User interface {
 	NewUser()
@@ -9,10 +13,10 @@ type User interface {
 // type Transaction interface{}
 
 type Payment interface {
-	NewPayment(id int, email string, sum int, val string)
-	PaymentStatus(paymentId int)
-	GetAllPaymentsByID(userId int)
-	GetAllPaymentsByEmail(email string)
+	NewPayment(id int, email string, sum int, val string) error
+	PaymentStatus(paymentId int) (string, error)
+	GetAllPaymentsByUserID(userId int) ([]models.Transaction, error)
+	GetAllPaymentsByEmail(email string) ([]models.Transaction, error)
 	CancelPayment(paymentId int)
 }
 
