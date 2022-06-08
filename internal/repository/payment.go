@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/altuxa/payment-service-emulator/internal/models"
@@ -18,25 +19,25 @@ func NewPaymentRepo(db *sql.DB) *PaymentRepo {
 	}
 }
 
-func (p *PaymentRepo) NewPayment(id int, email string, sum int, val string) error {
+func (p *PaymentRepo) NewPayment(id int, email string, sum int, val string, status string) (int, error) {
 	stmt, err := p.db.Prepare("INSERT INTO Transactions(UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status)VALUES(?,?,?,?,?,?,?)")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	date := time.Now()
-	res, err := stmt.Exec(id, email, sum, val, date, date, models.StatusNew)
+	res, err := stmt.Exec(id, email, sum, val, date, date, status)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	paymentID, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if paymentID == 0 {
-		return errors.New("payment not create")
+		return 0, errors.New("payment not create")
 	}
 	defer stmt.Close()
-	return nil
+	return int(paymentID), nil
 }
 
 func (p *PaymentRepo) PaymentStatus(paymentId int) (string, error) {
@@ -111,10 +112,17 @@ func (p *PaymentRepo) SetStatusFail(paymentId int) error {
 	return nil
 }
 
-func (p *PaymentRepo) SetStatusError(paymentId int) error {
-	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusError)
-	if err != nil {
-		return err
-	}
-	return nil
+// func (p *PaymentRepo) SetStatusError(paymentId int) error {
+// 	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusError)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+func (p *PaymentRepo) PaymentErrorImitation() bool {
+	rand.Seed(time.Now().UnixNano())
+	a := rand.Intn(60)
+	b := rand.Intn(45)
+	return a > b
 }

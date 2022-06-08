@@ -11,14 +11,15 @@ type User interface {
 }
 
 type Payment interface {
-	NewPayment(id int, email string, sum int, val string) error
+	NewPayment(id int, email string, sum int, val string, status string) (int, error)
 	PaymentStatus(paymentId int) (string, error)
 	GetAllPaymentsByUserID(userId int) ([]models.Transaction, error)
 	GetAllPaymentsByEmail(email string) ([]models.Transaction, error)
 	DeletePayment(paymentId int) error
 	SetStatusSuccess(paymentId int) error
 	SetStatusFail(paymentId int) error
-	SetStatusError(paymentId int) error
+	// SetStatusError(paymentId int) error
+	PaymentErrorImitation() bool
 }
 
 type Repositories struct {

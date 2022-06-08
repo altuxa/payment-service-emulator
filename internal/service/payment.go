@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	"github.com/altuxa/payment-service-emulator/internal/models"
 	"github.com/altuxa/payment-service-emulator/internal/repository"
 )
 
@@ -31,10 +32,34 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 	return nil
 }
 
-func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) error {
-	err := p.repo.NewPayment(id, email, sum, val)
+func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, error) {
+	status := models.StatusNew
+	random := p.repo.PaymentErrorImitation()
+	if !random {
+		status = models.StatusError
+	}
+	id, err := p.repo.NewPayment(id, email, sum, val, status)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (p *PaymentService) PaymentProcessing(id int) error {
+	err := p.repo.SetStatusSuccess(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+// func (p *PaymentService) PaymentErrorImitation(id int) bool {
+// 	rand.Seed(time.Now().UnixNano())
+// 	a := rand.Intn(60)
+// 	b := rand.Intn(45)
+// 	if a > b {
+// 		return true
+// 	}
+// 	err := p.repo.SetStatusError(id)
+// 	return err != nil
+// }
