@@ -32,7 +32,7 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 	return nil
 }
 
-func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, error) {
+func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, string, error) {
 	status := models.StatusNew
 	random := p.repo.PaymentErrorImitation()
 	if !random {
@@ -40,9 +40,9 @@ func (p *PaymentService) CreatePayment(id int, email string, sum int, val string
 	}
 	id, err := p.repo.NewPayment(id, email, sum, val, status)
 	if err != nil {
-		return 0, err
+		return 0, status, err
 	}
-	return id, nil
+	return id, status, nil
 }
 
 func (p *PaymentService) PaymentProcessing(id int) error {
@@ -63,3 +63,11 @@ func (p *PaymentService) PaymentProcessing(id int) error {
 // 	err := p.repo.SetStatusError(id)
 // 	return err != nil
 // }
+
+func (p *PaymentService) PaymentStatus(paymentId int) (string, error) {
+	status, err := p.repo.PaymentStatus(paymentId)
+	if err != nil {
+		return "", err
+	}
+	return status, nil
+}

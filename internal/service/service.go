@@ -6,9 +6,9 @@ type User interface{}
 
 type Payment interface {
 	CancelPayment(paymentId int) error
-	CreatePayment(id int, email string, sum int, val string) (int, error)
+	CreatePayment(id int, email string, sum int, val string) (int, string, error)
 	PaymentProcessing(id int) error
-	// PaymentErrorImitation(id int) bool
+	PaymentStatus(paymentId int) (string, error)
 }
 
 type Services struct {

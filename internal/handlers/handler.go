@@ -22,6 +22,7 @@ func NewHandler(service *service.Services) *Handler {
 func (h *Handler) Server() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/new", h.NewTransaction)
+	mux.HandleFunc("/status/", h.StatusByID)
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatalln(err)

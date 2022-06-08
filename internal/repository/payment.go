@@ -48,6 +48,9 @@ func (p *PaymentRepo) PaymentStatus(paymentId int) (string, error) {
 	}
 	row := stmt.QueryRow(paymentId)
 	row.Scan(&status)
+	if len(status) == 0 {
+		return "", errors.New("payment not found")
+	}
 	defer stmt.Close()
 	return status, nil
 }
