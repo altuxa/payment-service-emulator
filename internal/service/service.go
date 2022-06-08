@@ -6,6 +6,7 @@ type User interface{}
 
 type Payment interface {
 	CancelPayment(paymentId int) error
+	CreatePayment()
 }
 
 type Services struct {

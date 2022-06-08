@@ -1,6 +1,11 @@
 package handlers
 
-import "github.com/altuxa/payment-service-emulator/internal/service"
+import (
+	"log"
+	"net/http"
+
+	"github.com/altuxa/payment-service-emulator/internal/service"
+)
 
 type Handler struct {
 	userService    service.User
@@ -15,4 +20,10 @@ func NewHandler(service *service.Services) *Handler {
 }
 
 func (h *Handler) Server() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/new", h.NewTransaction)
+	err := http.ListenAndServe(":8080", mux)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

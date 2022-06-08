@@ -30,3 +30,11 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 	}
 	return nil
 }
+
+func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) error {
+	err := p.repo.NewPayment(id, email, sum, val)
+	if err != nil {
+		return err
+	}
+	return nil
+}
