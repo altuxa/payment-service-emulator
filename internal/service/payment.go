@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	"github.com/altuxa/payment-service-emulator/internal/helpers"
 	"github.com/altuxa/payment-service-emulator/internal/models"
 	"github.com/altuxa/payment-service-emulator/internal/repository"
 )
@@ -34,7 +35,7 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 
 func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, string, error) {
 	status := models.StatusNew
-	random := p.repo.PaymentErrorImitation()
+	random := helpers.PaymentErrorImitation()
 	if !random {
 		status = models.StatusError
 	}

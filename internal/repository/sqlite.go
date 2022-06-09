@@ -21,9 +21,9 @@ func CreateTable(db *sql.DB) error {
 	_, err := db.Exec(`CREATE TABLE "Transactions" (
 		"ID"	INTEGER NOT NULL UNIQUE,
 		"UserID"	INTEGER,
-		"UserEmail"	TEXT UNIQUE,
+		"UserEmail"	TEXT,
 		"Sum"	INTEGER,
-		"Valute"	TEXT,
+		"Currency"	TEXT,
 		"CreationDate"	DATETIME NOT NULL,
 		"ChangeDate"	DATETIME NOT NULL,
 		"Status"	TEXT,

@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"math/rand"
 	"time"
 
 	"github.com/altuxa/payment-service-emulator/internal/models"
@@ -20,7 +19,7 @@ func NewPaymentRepo(db *sql.DB) *PaymentRepo {
 }
 
 func (p *PaymentRepo) NewPayment(id int, email string, sum int, val string, status string) (int, error) {
-	stmt, err := p.db.Prepare("INSERT INTO Transactions(UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status)VALUES(?,?,?,?,?,?,?)")
+	stmt, err := p.db.Prepare("INSERT INTO Transactions(UserID, UserEmail,Sum,Currency,CreationDate,ChangeDate,Status)VALUES(?,?,?,?,?,?,?)")
 	if err != nil {
 		return 0, err
 	}
@@ -57,7 +56,7 @@ func (p *PaymentRepo) PaymentStatus(paymentId int) (string, error) {
 
 func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, error) {
 	payments := []models.Transaction{}
-	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserID = ?", userId)
+	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Currency,CreationDate,ChangeDate,Status FROM Transactions WHERE UserID = ?", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +74,7 @@ func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, 
 
 func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction, error) {
 	payments := []models.Transaction{}
-	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Valute,CreationDate,ChangeDate,Status FROM Transactions WHERE UserEmail = ?", email)
+	row, err := p.db.Query("SELECT ID,UserID, UserEmail,Sum,Currency,CreationDate,ChangeDate,Status FROM Transactions WHERE UserEmail = ?", email)
 	if err != nil {
 		return nil, err
 	}
@@ -123,9 +122,9 @@ func (p *PaymentRepo) SetStatusFail(paymentId int) error {
 // 	return nil
 // }
 
-func (p *PaymentRepo) PaymentErrorImitation() bool {
-	rand.Seed(time.Now().UnixNano())
-	a := rand.Intn(60)
-	b := rand.Intn(45)
-	return a > b
-}
+// func (p *PaymentRepo) PaymentErrorImitation() bool {
+// 	rand.Seed(time.Now().UnixNano())
+// 	a := rand.Intn(60)
+// 	b := rand.Intn(45)
+// 	return a > b
+// }

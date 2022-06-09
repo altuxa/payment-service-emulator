@@ -19,7 +19,7 @@ type Payment interface {
 	SetStatusSuccess(paymentId int) error
 	SetStatusFail(paymentId int) error
 	// SetStatusError(paymentId int) error
-	PaymentErrorImitation() bool
+	// PaymentErrorImitation() bool
 }
 
 type Repositories struct {
