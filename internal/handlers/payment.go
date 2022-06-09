@@ -27,11 +27,16 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
+	a := strconv.Itoa(id)
 	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	// http.Post("http://localhost:8080/processing/"+strconv.Itoa(id), "text", nil)
-	// http.NewRequest("POST", "http://localhost:8080/processing/"+strconv.Itoa(id), nil)
+	http.Post("http://localhost:8080/processing/"+a, "", nil)
+	// log.Println(id)
+	// g := strings.NewReader(a)
+	// buf := make([]byte, 1)
+	// http.NewRequest(http.MethodPost, "http://localhost:8080/processing/"+strconv.Itoa(id), nil)
 	w.Write(jsonData)
 }
 
@@ -60,6 +65,18 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// var id string
+	// reqBody, err := ioutil.ReadAll(r.Body)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+	// err = json.Unmarshal(reqBody, &id)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
 	err = h.paymentService.PaymentProcessing(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

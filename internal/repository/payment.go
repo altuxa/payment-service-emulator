@@ -99,7 +99,7 @@ func (p *PaymentRepo) DeletePayment(paymentId int) error {
 }
 
 func (p *PaymentRepo) SetStatusSuccess(paymentId int) error {
-	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusSuccess)
+	_, err := p.db.Exec("UPDATE Transactions Set Status  = ? WHERE ID = ?", models.StatusSuccess, paymentId)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (p *PaymentRepo) SetStatusSuccess(paymentId int) error {
 }
 
 func (p *PaymentRepo) SetStatusFail(paymentId int) error {
-	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusFail)
+	_, err := p.db.Exec("UPDATE Transactions Set Status  = ? WHERE ID = ?", models.StatusFail, paymentId)
 	if err != nil {
 		return err
 	}
