@@ -27,10 +27,11 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// fmt.Println(id)
 	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	// http.Post("http://localhost:8080/processing/"+strconv.Itoa(id), "text", nil)
+	// http.NewRequest("POST", "http://localhost:8080/processing/"+strconv.Itoa(id), nil)
 	w.Write(jsonData)
 }
 
@@ -50,4 +51,18 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
+}
+
+func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
+	strId := strings.TrimPrefix(r.URL.Path, "/processing/")
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = h.paymentService.PaymentProcessing(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }

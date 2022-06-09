@@ -47,9 +47,16 @@ func (p *PaymentService) CreatePayment(id int, email string, sum int, val string
 }
 
 func (p *PaymentService) PaymentProcessing(id int) error {
-	err := p.repo.SetStatusSuccess(id)
+	status, err := p.repo.PaymentStatus(id)
 	if err != nil {
-		return err
+		return fmt.Errorf("payment not found %w", err)
+	}
+	if status != models.StatusNew {
+		return fmt.Errorf("incorrect payment status %s", status)
+	}
+	err = p.repo.SetStatusSuccess(id)
+	if err != nil {
+		return fmt.Errorf("%w", err)
 	}
 	return nil
 }

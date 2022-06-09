@@ -7,6 +7,8 @@ import (
 	"github.com/altuxa/payment-service-emulator/internal/service"
 )
 
+const addr = ":8080"
+
 type Handler struct {
 	userService    service.User
 	paymentService service.Payment
@@ -23,7 +25,8 @@ func (h *Handler) Server() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/new", h.NewTransaction)
 	mux.HandleFunc("/status/", h.StatusByID)
-	err := http.ListenAndServe(":8080", mux)
+	mux.HandleFunc("/processing/", h.PaymentStatusChange)
+	err := http.ListenAndServe(addr, mux)
 	if err != nil {
 		log.Fatalln(err)
 	}
