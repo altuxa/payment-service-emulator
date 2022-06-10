@@ -13,6 +13,7 @@ type Payment interface {
 	PaymentProcessing(id int) error
 	PaymentStatus(paymentId int) (string, error)
 	ByUserID(userID int) ([]models.Transaction, error)
+	ByUserEmail(email string) ([]models.Transaction, error)
 }
 
 type Services struct {

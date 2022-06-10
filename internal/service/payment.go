@@ -24,7 +24,7 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 	if err != nil {
 		return err
 	}
-	if status != "NEW" {
+	if status != models.StatusNew {
 		return fmt.Errorf("error payment status = %v", status)
 	}
 	err = p.repo.DeletePayment(paymentId)
@@ -86,6 +86,14 @@ func (p *PaymentService) ByUserID(userID int) ([]models.Transaction, error) {
 	transactions, err := p.repo.GetAllPaymentsByUserID(userID)
 	if err != nil {
 		return nil, fmt.Errorf("%w", err)
+	}
+	return transactions, nil
+}
+
+func (p *PaymentService) ByUserEmail(email string) ([]models.Transaction, error) {
+	transactions, err := p.repo.GetAllPaymentsByEmail(email)
+	if err != nil {
+		return nil, err
 	}
 	return transactions, nil
 }

@@ -41,7 +41,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
-	strId := strings.TrimPrefix(r.URL.Path, "/status/")
+	strId := strings.TrimPrefix(r.URL.Path, "/payments/status/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -59,7 +59,7 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
-	strId := strings.TrimPrefix(r.URL.Path, "/processing/")
+	strId := strings.TrimPrefix(r.URL.Path, "/payments/processing/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -73,7 +73,7 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
-	strId := strings.TrimPrefix(r.URL.Path, "/payments/")
+	strId := strings.TrimPrefix(r.URL.Path, "/payments/byid/")
 	userID, err := strconv.Atoi(strId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -92,4 +92,49 @@ func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(data)
+}
+
+type input struct {
+	Email string `json:"email"`
+}
+
+func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
+	in := input{}
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = json.Unmarshal(reqBody, &in)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	transactions, err := h.paymentService.ByUserEmail(in.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	data, err := json.Marshal(transactions)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(data)
+}
+
+func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
+	strID := strings.TrimPrefix(r.URL.Path, "/payments/cancel/")
+	id, err := strconv.Atoi(strID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = h.paymentService.CancelPayment(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
