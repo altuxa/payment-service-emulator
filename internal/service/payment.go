@@ -63,17 +63,6 @@ func (p *PaymentService) PaymentProcessing(id int) error {
 	return nil
 }
 
-// func (p *PaymentService) PaymentErrorImitation(id int) bool {
-// 	rand.Seed(time.Now().UnixNano())
-// 	a := rand.Intn(60)
-// 	b := rand.Intn(45)
-// 	if a > b {
-// 		return true
-// 	}
-// 	err := p.repo.SetStatusError(id)
-// 	return err != nil
-// }
-
 func (p *PaymentService) PaymentStatus(paymentId int) (string, error) {
 	status, err := p.repo.PaymentStatus(paymentId)
 	if err != nil {

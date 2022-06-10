@@ -113,11 +113,3 @@ func (p *PaymentRepo) SetStatusFail(paymentId int) error {
 	}
 	return nil
 }
-
-// func (p *PaymentRepo) SetStatusError(paymentId int) error {
-// 	_, err := p.db.Exec("UPDATE Transactions Set Status  = ?", models.StatusError)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }

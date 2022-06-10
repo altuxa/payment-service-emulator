@@ -18,7 +18,6 @@ type Payment interface {
 	DeletePayment(paymentId int) error
 	SetStatusSuccess(paymentId int) error
 	SetStatusFail(paymentId int) error
-	// SetStatusError(paymentId int) error
 }
 
 type Repositories struct {

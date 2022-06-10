@@ -28,16 +28,12 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	a := strconv.Itoa(id)
+	paymentID := strconv.Itoa(id)
 	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	// log.Println(id)
-	// g := strings.NewReader(a)
-	// buf := make([]byte, 1)
-	// http.NewRequest(http.MethodPost, "http://localhost:8080/processing/"+strconv.Itoa(id), nil)
 	w.Write(jsonData)
-	go http.Post("http://localhost:8080/processing/"+a, "", nil)
+	go http.Post("http://localhost:8080/processing/"+paymentID, "", nil)
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
