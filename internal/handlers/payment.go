@@ -11,6 +11,10 @@ import (
 )
 
 func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	newPayment := models.Transaction{}
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -37,6 +41,10 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/status/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
@@ -55,6 +63,10 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/processing/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
@@ -69,6 +81,10 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/byid/")
 	userID, err := strconv.Atoi(strId)
 	if err != nil {
@@ -95,6 +111,10 @@ type input struct {
 }
 
 func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	in := input{}
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -122,6 +142,10 @@ func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	strID := strings.TrimPrefix(r.URL.Path, "/payments/cancel/")
 	id, err := strconv.Atoi(strID)
 	if err != nil {

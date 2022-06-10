@@ -29,7 +29,7 @@ func (h *Handler) Server() {
 	mux.HandleFunc("/payments/byid/", h.ByUserID)
 	mux.HandleFunc("/payments/byemail", h.ByUserEmail)
 	mux.HandleFunc("/payments/cancel/", h.CancelPayment)
-	log.Println("Server started localhost:8080")
+	log.Println("Server started at localhost:8080")
 	err := http.ListenAndServe(addr, mux)
 	if err != nil {
 		log.Fatalln(err)
