@@ -37,7 +37,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
-	go http.Post("http://localhost:8080/processing/"+paymentID, "", nil)
+	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "", nil)
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {

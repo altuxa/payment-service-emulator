@@ -56,9 +56,17 @@ func (p *PaymentService) PaymentProcessing(id int) error {
 	if status != models.StatusNew {
 		return fmt.Errorf("incorrect payment status %s", status)
 	}
-	err = p.repo.SetStatusSuccess(id)
-	if err != nil {
-		return fmt.Errorf("%w", err)
+	succes := helpers.FailStatusImitation()
+	if succes {
+		err = p.repo.SetStatusSuccess(id)
+		if err != nil {
+			return fmt.Errorf("%w", err)
+		}
+	} else if !succes {
+		err = p.repo.SetStatusFail(id)
+		if err != nil {
+			return fmt.Errorf("%w", err)
+		}
 	}
 	return nil
 }
