@@ -14,7 +14,7 @@ type Transaction struct {
 	UserID       int    `json:"userID"`
 	UserEmail    string `json:"email"`
 	Sum          int    `json:"sum"`
-	Valute       string `json:"valuta"`
+	Currency     string `json:"curr"`
 	CreationDate time.Time
 	ChangeDate   time.Time
 	Status       string

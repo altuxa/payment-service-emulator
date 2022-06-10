@@ -26,6 +26,8 @@ func (h *Handler) Server() {
 	mux.HandleFunc("/new", h.NewTransaction)
 	mux.HandleFunc("/status/", h.StatusByID)
 	mux.HandleFunc("/processing/", h.PaymentStatusChange)
+	mux.HandleFunc("/payments/", h.ByUserID)
+	log.Println("Server started localhost:8080")
 	err := http.ListenAndServe(addr, mux)
 	if err != nil {
 		log.Fatalln(err)

@@ -62,7 +62,7 @@ func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, 
 	}
 	for row.Next() {
 		payment := models.Transaction{}
-		err := row.Scan(&payment.ID, &payment.UserID, &payment.UserEmail, &payment.Sum, &payment.Valute, &payment.CreationDate, &payment.ChangeDate, &payment.Status)
+		err := row.Scan(&payment.ID, &payment.UserID, &payment.UserEmail, &payment.Sum, &payment.Currency, &payment.CreationDate, &payment.ChangeDate, &payment.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +80,7 @@ func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction,
 	}
 	for row.Next() {
 		payment := models.Transaction{}
-		err := row.Scan(&payment.ID, &payment.UserID, &payment.UserEmail, &payment.Sum, &payment.Valute, &payment.CreationDate, &payment.ChangeDate, &payment.Status)
+		err := row.Scan(&payment.ID, &payment.UserID, &payment.UserEmail, &payment.Sum, &payment.Currency, &payment.CreationDate, &payment.ChangeDate, &payment.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +99,7 @@ func (p *PaymentRepo) DeletePayment(paymentId int) error {
 }
 
 func (p *PaymentRepo) SetStatusSuccess(paymentId int) error {
-	_, err := p.db.Exec("UPDATE Transactions Set Status  = ? WHERE ID = ?", models.StatusSuccess, paymentId)
+	_, err := p.db.Exec("UPDATE Transactions Set Status = ?,ChangeDate = ? WHERE ID = ?", models.StatusSuccess, time.Now(), paymentId)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (p *PaymentRepo) SetStatusSuccess(paymentId int) error {
 }
 
 func (p *PaymentRepo) SetStatusFail(paymentId int) error {
-	_, err := p.db.Exec("UPDATE Transactions Set Status  = ? WHERE ID = ?", models.StatusFail, paymentId)
+	_, err := p.db.Exec("UPDATE Transactions Set Status = ?,ChangeDate = ? WHERE ID = ?", models.StatusFail, time.Now(), paymentId)
 	if err != nil {
 		return err
 	}
@@ -120,11 +120,4 @@ func (p *PaymentRepo) SetStatusFail(paymentId int) error {
 // 		return err
 // 	}
 // 	return nil
-// }
-
-// func (p *PaymentRepo) PaymentErrorImitation() bool {
-// 	rand.Seed(time.Now().UnixNano())
-// 	a := rand.Intn(60)
-// 	b := rand.Intn(45)
-// 	return a > b
 // }

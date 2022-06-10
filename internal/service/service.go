@@ -1,6 +1,9 @@
 package service
 
-import "github.com/altuxa/payment-service-emulator/internal/repository"
+import (
+	"github.com/altuxa/payment-service-emulator/internal/models"
+	"github.com/altuxa/payment-service-emulator/internal/repository"
+)
 
 type User interface{}
 
@@ -9,6 +12,7 @@ type Payment interface {
 	CreatePayment(id int, email string, sum int, val string) (int, string, error)
 	PaymentProcessing(id int) error
 	PaymentStatus(paymentId int) (string, error)
+	ByUserID(userID int) ([]models.Transaction, error)
 }
 
 type Services struct {

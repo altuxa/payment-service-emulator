@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/altuxa/payment-service-emulator/internal/helpers"
 	"github.com/altuxa/payment-service-emulator/internal/models"
@@ -47,6 +48,7 @@ func (p *PaymentService) CreatePayment(id int, email string, sum int, val string
 }
 
 func (p *PaymentService) PaymentProcessing(id int) error {
+	time.Sleep(2 * time.Second)
 	status, err := p.repo.PaymentStatus(id)
 	if err != nil {
 		return fmt.Errorf("payment not found %w", err)
@@ -78,4 +80,12 @@ func (p *PaymentService) PaymentStatus(paymentId int) (string, error) {
 		return "", err
 	}
 	return status, nil
+}
+
+func (p *PaymentService) ByUserID(userID int) ([]models.Transaction, error) {
+	transactions, err := p.repo.GetAllPaymentsByUserID(userID)
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	return transactions, nil
 }
