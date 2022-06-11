@@ -11,7 +11,7 @@ type User interface {
 }
 
 type Payment interface {
-	NewPayment(id int, email string, sum int, val string, status string) (int, error)
+	NewPayment(id int, email string, sum float64, val string, status string) (int, error)
 	PaymentStatus(paymentId int) (string, error)
 	GetAllPaymentsByUserID(userId int) ([]models.Transaction, error)
 	GetAllPaymentsByEmail(email string) ([]models.Transaction, error)

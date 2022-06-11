@@ -22,7 +22,7 @@ func CreateTable(db *sql.DB) error {
 		"ID"	INTEGER NOT NULL UNIQUE,
 		"UserID"	INTEGER,
 		"UserEmail"	TEXT,
-		"Sum"	INTEGER,
+		"Sum"	REAL,
 		"Currency"	TEXT,
 		"CreationDate"	DATETIME NOT NULL,
 		"ChangeDate"	DATETIME NOT NULL,

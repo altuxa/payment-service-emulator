@@ -35,7 +35,7 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 	return nil
 }
 
-func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, string, error) {
+func (p *PaymentService) CreatePayment(id int, email string, sum float64, val string) (int, string, error) {
 	if id == 0 || email == "" || sum == 0 || val == "" {
 		return 0, "", errors.New("invalid input")
 	}

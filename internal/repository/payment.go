@@ -18,7 +18,7 @@ func NewPaymentRepo(db *sql.DB) *PaymentRepo {
 	}
 }
 
-func (p *PaymentRepo) NewPayment(id int, email string, sum int, val string, status string) (int, error) {
+func (p *PaymentRepo) NewPayment(id int, email string, sum float64, val string, status string) (int, error) {
 	stmt, err := p.db.Prepare("INSERT INTO Transactions(UserID, UserEmail,Sum,Currency,CreationDate,ChangeDate,Status)VALUES(?,?,?,?,?,?,?)")
 	if err != nil {
 		return 0, err

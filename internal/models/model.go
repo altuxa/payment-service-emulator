@@ -11,10 +11,10 @@ const (
 
 type Transaction struct {
 	ID           int
-	UserID       int    `json:"UserID"`
-	UserEmail    string `json:"Email"`
-	Sum          int    `json:"Sum"`
-	Currency     string `json:"Currency"`
+	UserID       int     `json:"UserID"`
+	UserEmail    string  `json:"Email"`
+	Sum          float64 `json:"Sum"`
+	Currency     string  `json:"Currency"`
 	CreationDate time.Time
 	ChangeDate   time.Time
 	Status       string
