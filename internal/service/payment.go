@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -35,16 +36,23 @@ func (p *PaymentService) CancelPayment(paymentId int) error {
 }
 
 func (p *PaymentService) CreatePayment(id int, email string, sum int, val string) (int, string, error) {
+	if id == 0 || email == "" || sum == 0 || val == "" {
+		return 0, "", errors.New("invalid input")
+	}
+	err := helpers.ValidEmail(email)
+	if err != nil {
+		return 0, "", fmt.Errorf("invalid email %w", err)
+	}
 	status := models.StatusNew
 	random := helpers.PaymentErrorImitation()
 	if !random {
 		status = models.StatusError
 	}
-	id, err := p.repo.NewPayment(id, email, sum, val, status)
+	paymentID, err := p.repo.NewPayment(id, email, sum, val, status)
 	if err != nil {
 		return 0, status, err
 	}
-	return id, status, nil
+	return paymentID, status, nil
 }
 
 func (p *PaymentService) PaymentProcessing(id int) error {
