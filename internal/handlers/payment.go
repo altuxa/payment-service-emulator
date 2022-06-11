@@ -37,7 +37,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
-	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "", nil)
+	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", nil)
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,7 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonData, _ := json.Marshal(status)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	w.Write(jsonData)
 }
 
@@ -78,6 +78,7 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
@@ -157,4 +158,6 @@ func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 }
