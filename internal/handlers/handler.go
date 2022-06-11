@@ -25,7 +25,7 @@ func (h *Handler) Server() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/payments/new", h.NewTransaction)
 	mux.HandleFunc("/payments/status/", h.StatusByID)
-	mux.HandleFunc("/payments/processing/", h.PaymentStatusChange)
+	mux.HandleFunc("/payments/processing/", h.PaymentProcessing)
 	mux.HandleFunc("/payments/byid/", h.ByUserID)
 	mux.HandleFunc("/payments/byemail", h.ByUserEmail)
 	mux.HandleFunc("/payments/cancel/", h.CancelPayment)

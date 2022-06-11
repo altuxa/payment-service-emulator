@@ -7,7 +7,7 @@ import (
 )
 
 type User interface {
-	NewUser()
+	UserVerification(paymentID int, email string) (string, error)
 }
 
 type Payment interface {

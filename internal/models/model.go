@@ -19,3 +19,7 @@ type Transaction struct {
 	ChangeDate   time.Time
 	Status       string
 }
+
+type PaymentProcessingInput struct {
+	Email string `json:"Email"`
+}

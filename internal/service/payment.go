@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/altuxa/payment-service-emulator/internal/helpers"
 	"github.com/altuxa/payment-service-emulator/internal/models"
@@ -56,7 +55,7 @@ func (p *PaymentService) CreatePayment(id int, email string, sum float64, val st
 }
 
 func (p *PaymentService) PaymentProcessing(id int) (string, error) {
-	time.Sleep(2 * time.Second)
+	// time.Sleep(2 * time.Second)
 	status, err := p.repo.PaymentStatus(id)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)

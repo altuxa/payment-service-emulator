@@ -11,3 +11,14 @@ func NewUserService(repo repository.User) *UserService {
 		repo: repo,
 	}
 }
+
+func (u *UserService) Verification(payId int, email string) (bool, error) {
+	checkEmail, err := u.repo.UserVerification(payId, email)
+	if err != nil {
+		return false, err
+	}
+	if checkEmail != email {
+		return false, nil
+	}
+	return true, nil
+}

@@ -5,7 +5,10 @@ import (
 	"github.com/altuxa/payment-service-emulator/internal/repository"
 )
 
-type User interface{}
+type User interface {
+	Verification(payId int, email string) (bool, error)
+	// Authorization(inputEmail)
+}
 
 type Payment interface {
 	CancelPayment(paymentId int) error

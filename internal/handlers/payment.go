@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -16,7 +16,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newPayment := models.Transaction{}
-	reqBody, err := ioutil.ReadAll(r.Body)
+	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -32,12 +32,12 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	paymentID := strconv.Itoa(id)
+	// paymentID := strconv.Itoa(id)
 	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
-	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", nil)
+	// go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", nil)
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +62,7 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PaymentProcessing(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -71,6 +71,26 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(strId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	input := models.PaymentProcessingInput{}
+	reqBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = json.Unmarshal(reqBody, &input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	checkEmail, err := h.userService.Verification(id, input.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !checkEmail {
+		http.Error(w, "not enough rights", http.StatusUnauthorized)
 		return
 	}
 	status, err := h.paymentService.PaymentProcessing(id)
@@ -124,7 +144,7 @@ func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	in := input{}
-	reqBody, err := ioutil.ReadAll(r.Body)
+	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
