@@ -35,7 +35,11 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 	paymentID := strconv.Itoa(id)
-	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
+	jsonData, err := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	input := models.PaymentProcessingInput{
 		Email: newPayment.UserEmail,
 	}
@@ -66,7 +70,11 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	jsonData, _ := json.Marshal(status)
+	jsonData, err := json.Marshal(status)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonData)
