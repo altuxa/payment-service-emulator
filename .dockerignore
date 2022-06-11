@@ -2,3 +2,4 @@
 Dockerfile
 Makefile
 README.md
+internal/service/mocks/

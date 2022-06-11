@@ -5,6 +5,8 @@ import (
 	"github.com/altuxa/payment-service-emulator/internal/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type User interface {
 	Verification(payId int, email string) (bool, error)
 	// Authorization(inputEmail)
