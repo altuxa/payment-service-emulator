@@ -49,7 +49,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	w.Write(jsonData)
 	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", bytes.NewBuffer(data))
 }
@@ -62,7 +62,7 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/status/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
 	status, err := h.paymentService.PaymentStatus(id)

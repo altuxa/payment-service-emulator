@@ -69,6 +69,9 @@ func (p *PaymentRepo) GetAllPaymentsByUserID(userId int) ([]models.Transaction, 
 		payments = append(payments, payment)
 	}
 	defer row.Close()
+	if len(payments) == 0 {
+		return nil, errors.New("not found")
+	}
 	return payments, nil
 }
 
@@ -87,6 +90,9 @@ func (p *PaymentRepo) GetAllPaymentsByEmail(email string) ([]models.Transaction,
 		payments = append(payments, payment)
 	}
 	defer row.Close()
+	if len(payments) == 0 {
+		return nil, errors.New("not found")
+	}
 	return payments, nil
 }
 
