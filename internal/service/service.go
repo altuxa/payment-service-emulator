@@ -10,7 +10,7 @@ type User interface{}
 type Payment interface {
 	CancelPayment(paymentId int) error
 	CreatePayment(id int, email string, sum float64, val string) (int, string, error)
-	PaymentProcessing(id int) error
+	PaymentProcessing(id int) (string, error)
 	PaymentStatus(paymentId int) (string, error)
 	ByUserID(userID int) ([]models.Transaction, error)
 	ByUserEmail(email string) ([]models.Transaction, error)

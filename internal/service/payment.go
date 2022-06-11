@@ -55,28 +55,30 @@ func (p *PaymentService) CreatePayment(id int, email string, sum float64, val st
 	return paymentID, status, nil
 }
 
-func (p *PaymentService) PaymentProcessing(id int) error {
+func (p *PaymentService) PaymentProcessing(id int) (string, error) {
 	time.Sleep(2 * time.Second)
 	status, err := p.repo.PaymentStatus(id)
 	if err != nil {
-		return fmt.Errorf("payment not found %w", err)
+		return "", fmt.Errorf("%w", err)
 	}
 	if status != models.StatusNew {
-		return fmt.Errorf("incorrect payment status %s", status)
+		return "", fmt.Errorf("incorrect %s payment status ", status)
 	}
 	succes := helpers.FailStatusImitation()
 	if succes {
 		err = p.repo.SetStatusSuccess(id)
 		if err != nil {
-			return fmt.Errorf("%w", err)
+			return "", fmt.Errorf("%w", err)
 		}
+		return models.StatusSuccess, nil
 	} else if !succes {
 		err = p.repo.SetStatusFail(id)
 		if err != nil {
-			return fmt.Errorf("%w", err)
+			return "", fmt.Errorf("%w", err)
 		}
+		return models.StatusFail, nil
 	}
-	return nil
+	return "", nil
 }
 
 func (p *PaymentService) PaymentStatus(paymentId int) (string, error) {

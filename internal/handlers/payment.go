@@ -73,12 +73,19 @@ func (h *Handler) PaymentStatusChange(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = h.paymentService.PaymentProcessing(id)
+	status, err := h.paymentService.PaymentProcessing(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	data, err := json.Marshal(status)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	w.Write(data)
 }
 
 func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
