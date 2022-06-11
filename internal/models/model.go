@@ -23,3 +23,7 @@ type Transaction struct {
 type PaymentProcessingInput struct {
 	Email string `json:"Email"`
 }
+
+type InputByUserEmail struct {
+	Email string `json:"email"`
+}

@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -32,12 +34,20 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	// paymentID := strconv.Itoa(id)
+	paymentID := strconv.Itoa(id)
 	jsonData, _ := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
+	input := models.PaymentProcessingInput{
+		Email: newPayment.UserEmail,
+	}
+	data, err := json.Marshal(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
-	// go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", nil)
+	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", bytes.NewBuffer(data))
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +96,7 @@ func (h *Handler) PaymentProcessing(w http.ResponseWriter, r *http.Request) {
 	}
 	checkEmail, err := h.userService.Verification(id, input.Email)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("not enough rights %v", err), http.StatusBadRequest)
 		return
 	}
 	if !checkEmail {
@@ -134,16 +144,12 @@ func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-type input struct {
-	Email string `json:"email"`
-}
-
 func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	in := input{}
+	in := models.InputByUserEmail{}
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
