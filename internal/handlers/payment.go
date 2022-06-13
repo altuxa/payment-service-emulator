@@ -134,7 +134,7 @@ func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/byid/")
 	userID, err := strconv.Atoi(strId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
 	transactions, err := h.paymentService.ByUserID(userID)

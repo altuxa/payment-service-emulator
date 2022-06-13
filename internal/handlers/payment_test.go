@@ -25,7 +25,7 @@ func TestNewTransaction(t *testing.T) {
 		ExpectedRequestBody string
 		ExpectedStatusCode  int
 	}{
-		"OK": {
+		"Success": {
 			Input: models.Transaction{
 				UserID:    1,
 				UserEmail: "ann@mail.ru",
@@ -44,10 +44,9 @@ func TestNewTransaction(t *testing.T) {
 			Input: models.Transaction{
 				UserID:    1,
 				UserEmail: "ann@mail.ru",
-				Sum:       502.3,
 				Currency:  "USD",
 			},
-			InputBody: `{"UserID":1,"Email":"ann@mail.ru","Sum":502.3,"Currency":"USD"}`,
+			InputBody: `{"UserID":1,"Email":"ann@mail.ru","Currency":"USD"}`,
 			Method:    "POST",
 			mock: func(s *mock_service.MockPayment, tr models.Transaction) {
 				s.EXPECT().CreatePayment(tr.UserID, tr.UserEmail, tr.Sum, tr.Currency).Return(0, "", errors.New("bad req"))
@@ -55,7 +54,7 @@ func TestNewTransaction(t *testing.T) {
 			ExpectedRequestBody: "bad req\n",
 			ExpectedStatusCode:  400,
 		},
-		"method not allowed": {
+		"Invalid method": {
 			Method:              "GET",
 			mock:                func(s *mock_service.MockPayment, tr models.Transaction) {},
 			ExpectedRequestBody: "method not allowed\n",
@@ -77,7 +76,6 @@ func TestNewTransaction(t *testing.T) {
 	for tName, tCase := range tData {
 		v := tCase
 		t.Run(tName, func(t *testing.T) {
-			// init deps
 			c := gomock.NewController(t)
 			defer c.Finish()
 			pay := mock_service.NewMockPayment(c)
@@ -86,13 +84,9 @@ func TestNewTransaction(t *testing.T) {
 				Payment: pay,
 			}
 			handler := NewHandler(services)
-			// test server
 			r := http.HandlerFunc(handler.NewTransaction)
-			// test req
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(v.Method, "/payments/new", bytes.NewBufferString(v.InputBody))
-
-			// perform request
 			r.ServeHTTP(w, req)
 			assert.Equal(t, v.ExpectedRequestBody, w.Body.String())
 			assert.Equal(t, v.ExpectedStatusCode, w.Code)
@@ -110,7 +104,7 @@ func TestStatusByID(t *testing.T) {
 		ExpectedRequestBody string
 		Mock                mock
 	}{
-		"success": {
+		"Success": {
 			URL:                 "/payments/status/1",
 			Input:               1,
 			Method:              "GET",
@@ -144,8 +138,7 @@ func TestStatusByID(t *testing.T) {
 			Method:              "POST",
 			ExpectedStatusCode:  405,
 			ExpectedRequestBody: "method not allowed\n",
-			Mock: func(s *mock_service.MockPayment, id int) {
-			},
+			Mock:                func(s *mock_service.MockPayment, id int) {},
 		},
 	}
 	for tName, tCase := range tData {
@@ -208,14 +201,24 @@ func TestByUserID(t *testing.T) {
 			ExpectedRequestBody: "method not allowed\n",
 			Mock:                func(s *mock_service.MockPayment, id int) {},
 		},
-		// "bad req": {
-		// 	URL:                 "/payments/byid/1",
-		// 	ID:                  1,
-		// 	Method:              "POST",
-		// 	ExpectedStatusCode:  405,
-		// 	ExpectedRequestBody: "method not allowed\n",
-		// 	Mock:                func(s *mock_service.MockPayment, id int) {},
-		// },
+		"payment not found": {
+			URL:                 "/payments/byid/1",
+			ID:                  1,
+			Method:              "GET",
+			ExpectedStatusCode:  400,
+			ExpectedRequestBody: "not found\n",
+			Mock: func(s *mock_service.MockPayment, id int) {
+				s.EXPECT().ByUserID(id).Return(nil, errors.New("not found"))
+			},
+		},
+		"ivalid url input": {
+			URL:                 "/payments/byid/a",
+			ID:                  1,
+			Method:              "GET",
+			ExpectedStatusCode:  400,
+			ExpectedRequestBody: "invalid input\n",
+			Mock:                func(s *mock_service.MockPayment, id int) {},
+		},
 	}
 	for tName, tCase := range tData {
 		v := tCase
