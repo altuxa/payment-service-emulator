@@ -51,7 +51,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonData)
-	go http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", bytes.NewBuffer(data))
+	http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", bytes.NewBuffer(data))
 }
 
 func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +88,7 @@ func (h *Handler) PaymentProcessing(w http.ResponseWriter, r *http.Request) {
 	strId := strings.TrimPrefix(r.URL.Path, "/payments/processing/")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 	input := models.PaymentProcessingInput{}
@@ -157,18 +157,18 @@ func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	in := models.InputByUserEmail{}
+	input := models.InputByUserEmail{}
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = json.Unmarshal(reqBody, &in)
+	err = json.Unmarshal(reqBody, &input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	transactions, err := h.paymentService.ByUserEmail(in.Email)
+	transactions, err := h.paymentService.ByUserEmail(input.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -201,4 +201,5 @@ func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Done"))
 }
