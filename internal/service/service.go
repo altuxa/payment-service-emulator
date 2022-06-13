@@ -9,7 +9,6 @@ import (
 
 type User interface {
 	Verification(payId int, email string) (bool, error)
-	// Authorization(inputEmail)
 }
 
 type Payment interface {

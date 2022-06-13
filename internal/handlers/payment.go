@@ -35,7 +35,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 	paymentID := strconv.Itoa(id)
-	jsonData, err := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
+	output, err := json.Marshal("paymentID: " + strconv.Itoa(id) + " status: " + status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -50,7 +50,7 @@ func (h *Handler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonData)
+	w.Write(output)
 	http.Post("http://localhost:8080/payments/processing/"+paymentID, "application/json", bytes.NewBuffer(data))
 }
 
@@ -70,14 +70,14 @@ func (h *Handler) StatusByID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	jsonData, err := json.Marshal(status)
+	outputStatus, err := json.Marshal(status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonData)
+	w.Write(outputStatus)
 }
 
 func (h *Handler) PaymentProcessing(w http.ResponseWriter, r *http.Request) {
@@ -116,14 +116,14 @@ func (h *Handler) PaymentProcessing(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	data, err := json.Marshal(status)
+	outputStatus, err := json.Marshal(status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	w.Write(outputStatus)
 }
 
 func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
@@ -142,14 +142,14 @@ func (h *Handler) ByUserID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	data, err := json.Marshal(transactions)
+	allTransactions, err := json.Marshal(transactions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	w.Write(allTransactions)
 }
 
 func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
@@ -173,14 +173,14 @@ func (h *Handler) ByUserEmail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	data, err := json.Marshal(transactions)
+	allTransactions, err := json.Marshal(transactions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	w.Write(allTransactions)
 }
 
 func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
@@ -191,7 +191,7 @@ func (h *Handler) CancelPayment(w http.ResponseWriter, r *http.Request) {
 	strID := strings.TrimPrefix(r.URL.Path, "/payments/cancel/")
 	id, err := strconv.Atoi(strID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
 	err = h.paymentService.CancelPayment(id)
